@@ -10,6 +10,7 @@ import {
 import { CourseCard } from "@/components/CourseCard";
 import { courses } from "@/mocks/courses";
 import { instructors } from "@/mocks/instructors";
+import { getTranslations } from "next-intl/server";
 
 async function getInstructor(id: string) {
   return instructors.find((i) => i.id === id) || null;
@@ -27,10 +28,12 @@ interface Args {
 
 export async function generateMetadata({ params }: Args) {
   const { id } = await params;
+  const t = await getTranslations("instructorPage.meta");
 
   return {
-    title:
-      "Преподаватель " + instructors.find((course) => course.id === id)!.name,
+    title: t("title", {
+      name: instructors.find((course) => course.id === id)!.name,
+    }),
     description: instructors.find((course) => course.id === id)!.expertise,
   };
 }
@@ -38,15 +41,17 @@ export async function generateMetadata({ params }: Args) {
 export default async function InstructorPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const instructor = await getInstructor(params.id);
+  const t = await getTranslations("instructorPage");
+  const { id } = await params;
+  const instructor = await getInstructor(id);
 
   if (!instructor) {
     notFound();
   }
 
-  const courses = await getCoursesByInstructor(params.id);
+  const courses = await getCoursesByInstructor(id);
 
   return (
     <div className="container mx-auto py-8">
@@ -63,13 +68,13 @@ export default async function InstructorPage({
           </Avatar>
           <div>
             <CardTitle className="text-3xl">{instructor.name}</CardTitle>
-            <CardDescription>Преподаватель</CardDescription>
+            <CardDescription>{t("description")}</CardDescription>
           </div>
         </CardHeader>
         <CardContent>
           <p className="mb-4">{instructor.bio}</p>
           <div>
-            <h3 className="font-semibold mb-2">Опыт и специализация</h3>
+            <h3 className="font-semibold mb-2">{t("experience")}</h3>
             <div className="flex flex-wrap gap-2">
               {instructor.expertise.map((skill, index) => (
                 <span
@@ -84,7 +89,9 @@ export default async function InstructorPage({
         </CardContent>
       </Card>
 
-      <h2 className="text-2xl font-bold mb-4">Курсы у {instructor.name}</h2>
+      <h2 className="text-2xl font-bold mb-4">
+        {t("otherCourses", { name: instructor.name })}
+      </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {courses.map((course) => (
           <CourseCard key={course.id} course={course} />

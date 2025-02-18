@@ -7,8 +7,9 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { teamMembers } from "@/mocks/teamMembers";
+import { getTranslations } from "next-intl/server";
 
-export default function About() {
+export default async function About() {
   const benefits = [
     "Гибкий график обучения",
     "Опытные преподаватели из разных областей",
@@ -17,27 +18,24 @@ export default function About() {
     "Современная программа, регулярно обновляемая",
   ];
 
+  const t = await getTranslations("aboutPage");
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8 text-center">О нашей школе</h1>
+      <h1 className="text-4xl font-bold mb-8 text-center">{t("title")}</h1>
 
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>Наша цель</CardTitle>
+          <CardTitle>{t("mission.title")}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p>
-            В Онлайн Школе мы стремимся предоставить качественное образование,
-            доступное каждому, в любой точке мира. Наша миссия — дать учащимся
-            знания и навыки, которые помогут им добиться успеха в быстро
-            меняющемся цифровом мире.
-          </p>
+          <p>{t("mission.description")}</p>
         </CardContent>
       </Card>
 
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>Почему выбирают нас?</CardTitle>
+          <CardTitle>{t("benefits.title")}</CardTitle>
         </CardHeader>
         <CardContent>
           <ul className="list-disc pl-5 space-y-2">
@@ -48,7 +46,7 @@ export default function About() {
         </CardContent>
       </Card>
 
-      <h2 className="text-3xl font-semibold mb-4">Наша команда</h2>
+      <h2 className="text-3xl font-semibold mb-4">{t("team.title")}</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {teamMembers.map((member) => (
           <Card key={member.name}>

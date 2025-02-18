@@ -1,0 +1,66 @@
+{
+  "aboutPage": {
+    "title": "About Our School",
+    "mission": {
+      "title": "Our Mission",
+      "description": "At Online School, we strive to provide quality education accessible to everyone, anywhere in the world. Our mission is to equip students with the knowledge and skills that will help them succeed in the rapidly changing digital world."
+    },
+    "benefits": {
+      "title": "Why Choose Us?",
+      "p": [
+        "Flexible learning schedule",
+        "Experienced teachers from various fields"
+      ]
+    },
+    "team": {
+      "title": "Our Team"
+    },
+    "meta": {
+      "title": "SOnS: about our school",
+      "description": "An online school offering flexible courses in web development, JavaScript, Node.js, and more.",
+      "keywords": "education, online school, courses, web development, JavaScript, Node.js",
+      "og": {
+        "title": "SOnS: about our school",
+        "description": "An online school offering flexible courses in web development, JavaScript, Node.js, and more."
+      }
+    }
+  },
+  "coursesPage": {
+    "title": "Our courses",
+    "searchBar": {
+      "placeholder": "Search course..."
+    },
+    "courseCard": {
+      "instructor": "Instructor",
+      "duration": "Duration",
+      "more": "More"
+    },
+    "meta": {
+      "title": "SOnS: Courses",
+      "description": "Courses of Some online school"
+    }
+  },
+  "instructorPage": {
+    "description": "Instructor",
+    "experience": "Areas of Expertise",
+    "otherCourses": "Courses by {name}",
+    "meta": {
+      "title": "Instructor {name}"
+    }
+  },
+  "coursePage": {
+    "instructor": "Instructor",
+    "duration": "Duration",
+    "level": "Level",
+    "topics": "Topics",
+    "enrollButton": "Enroll"
+  },
+  "common": {
+    "header": {
+      "menu": {
+        "aboutUs": "About us",
+        "listCourses": "Courses"
+      }
+    }
+  }
+}
