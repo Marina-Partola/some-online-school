@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import {
   Card,
   CardContent,
@@ -5,8 +6,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Link from "next/link";
 import { Button } from "../ui/button";
+
+import { Link } from "@/i18n/routing";
 
 interface Instructor {
   name: string;
@@ -25,13 +27,15 @@ interface CourseCardProps {
   course: Course;
 }
 
-export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
+export const CourseCard: React.FC<CourseCardProps> = async ({ course }) => {
+  const t = await getTranslations("coursesPage.courseCard");
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>{course.title}</CardTitle>
         <CardDescription>
-          Преподаватель:{" "}
+          {t("instructor")}:{" "}
           <Link
             href={`/instructors/${course.instructor.id}`}
             className="hover:underline"
@@ -43,10 +47,10 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
       <CardContent>
         <p className="mb-4">{course.description}</p>
         <p className="mb-4 text-sm text-muted-foreground">
-          Продолжительность: {course.duration}
+          {t("duration")}: {course.duration}
         </p>
         <Link href={`/courses/${course.id}`}>
-          <Button>Подробнее</Button>
+          <Button>{t("more")}</Button>
         </Link>
       </CardContent>
     </Card>

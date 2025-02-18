@@ -1,9 +1,12 @@
+import { getTranslations } from "next-intl/server";
 import { CoursesList } from "./components/CoursesList";
 
 export async function generateMetadata() {
+  const t = await getTranslations("coursesPage.meta");
+
   return {
-    title: "SOnS: Курсы",
-    description: "Курсы Some online school",
+    title: t("title"),
+    description: t("description"),
   };
 }
 

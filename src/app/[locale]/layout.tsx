@@ -1,36 +1,50 @@
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer/Footer";
+import { getMessages, getTranslations } from "next-intl/server";
+import { NextIntlClientProvider } from "next-intl";
+import { routing } from "@/i18n/routing";
+import { ILocale } from "@/types";
+import { notFound } from "next/navigation";
 
 import "../globals.css";
+export async function generateMetadata() {
+  const t = await getTranslations("aboutPage.meta");
 
-export default function RootLayout({
+  return {
+    title: t("title"),
+    description: t("description"),
+    keywords: t("keywords"),
+    openGraph: {
+      title: t("og.title"),
+      description: t("og.description"),
+      type: "website",
+    },
+  };
+}
+
+export default async function RootLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }>) {
+  const { locale } = await params;
+
+  if (!routing.locales.includes(locale as ILocale)) {
+    notFound();
+  }
+
+  const messages = await getMessages();
+
   return (
-    <html>
-      <head>
-        <title>SOnS: О нашей школе</title>
-        <meta
-          name="description"
-          content="Онлайн школа, предлагающая гибкие курсы по веб-разработке, JavaScript, Node.js и многим другим."
-        />
-        <meta
-          name="keywords"
-          content="образование, онлайн-школа, курсы, веб-разработка, JavaScript, Node.js"
-        />
-        <meta property="og:title" content="О нашей школе" />
-        <meta
-          property="og:description"
-          content="Онлайн школа, предлагающая гибкие курсы по веб-разработке, JavaScript, Node.js и многим другим."
-        />
-        <meta property="og:type" content="website" />
-      </head>
+    <html lang={locale}>
       <body className="flex flex-col">
-        <Header />
-        <main className="flex-1 pl-6 pr-6">{children}</main>
-        <Footer />
+        <NextIntlClientProvider messages={messages}>
+          <Header />
+          <main className="flex-1 pl-6 pr-6">{children}</main>
+          <Footer />
+        </NextIntlClientProvider>
       </body>
     </html>
   );
