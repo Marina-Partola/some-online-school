@@ -3,10 +3,14 @@
 import { Input } from "@/components/ui/input";
 import { CourseCard } from "@/components/CourseCard";
 import { useState } from "react";
-import { courses } from "@/mocks/courses";
 import { useTranslations } from "next-intl";
+import { Course } from "@/modules/admin/payload.types";
 
-export const CoursesList: React.FC = () => {
+interface CourseListProps {
+  courses: Course[];
+}
+
+export const CoursesList: React.FC<CourseListProps> = ({ courses }) => {
   const [filteredCourses, setFilteredCourses] = useState(courses);
 
   const handleSearchCourse = (value: string) => {
@@ -30,6 +34,7 @@ export const CoursesList: React.FC = () => {
           onChange={(e) => handleSearchCourse(e.target.value)}
         />
       </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredCourses.map((course) => (
           <CourseCard key={course.id} course={course} />

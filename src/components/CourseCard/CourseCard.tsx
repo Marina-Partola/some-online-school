@@ -1,4 +1,5 @@
-import { getTranslations } from "next-intl/server";
+"use client";
+import { useTranslations } from "next-intl";
 import {
   Card,
   CardContent,
@@ -9,40 +10,30 @@ import {
 import { Button } from "../ui/button";
 
 import { Link } from "@/i18n/routing";
-
-interface Instructor {
-  name: string;
-  id: string;
-}
-
-interface Course {
-  id: string;
-  title: string;
-  description: string;
-  instructor: Instructor;
-  duration: string;
-}
+import { Course } from "@/modules/admin/payload.types";
 
 interface CourseCardProps {
   course: Course;
 }
 
-export const CourseCard: React.FC<CourseCardProps> = async ({ course }) => {
-  const t = await getTranslations("coursesPage.courseCard");
+export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
+  const t = useTranslations("coursesPage.courseCard");
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>{course.title}</CardTitle>
-        <CardDescription>
-          {t("instructor")}:{" "}
-          <Link
-            href={`/instructors/${course.instructor.id}`}
-            className="hover:underline"
-          >
-            {course.instructor.name}
-          </Link>
-        </CardDescription>
+        {typeof course.instructor !== "number" && (
+          <CardDescription>
+            {t("instructor")}:{" "}
+            <Link
+              href={`/instructors/${course.instructor.id}`}
+              className="hover:underline"
+            >
+              {course.instructor.name}
+            </Link>
+          </CardDescription>
+        )}
       </CardHeader>
       <CardContent>
         <p className="mb-4">{course.description}</p>

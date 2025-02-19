@@ -8,57 +8,90 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { CourseCard } from "@/components/CourseCard";
-import { courses } from "@/mocks/courses";
-import { instructors } from "@/mocks/instructors";
+
 import { getTranslations } from "next-intl/server";
-
-async function getInstructor(id: string) {
-  return instructors.find((i) => i.id === id) || null;
-}
-
-async function getCoursesByInstructor(instructorId: string) {
-  return courses.filter((c) => c.instructor.id === instructorId);
-}
+import { getAppPayload } from "@/utils/getAppPayload";
+import React from "react";
+import { ILocale } from "@/types";
 
 interface Args {
   params: Promise<{
     id: string;
+    locale: ILocale;
   }>;
 }
 
 export async function generateMetadata({ params }: Args) {
-  const { id } = await params;
+  const { id, locale } = await params;
   const t = await getTranslations("instructorPage.meta");
+
+  const payload = await getAppPayload();
+
+  const instructorData = await payload.find({
+    collection: "instructors",
+    where: {
+      id: {
+        equals: id,
+      },
+    },
+    locale,
+  });
+
+  if (!instructorData.docs.length) {
+    return {
+      title: "not found",
+    };
+  }
+
+  const instructor = instructorData.docs[0];
 
   return {
     title: t("title", {
-      name: instructors.find((course) => course.id === id)!.name,
+      name: instructor.name,
     }),
-    description: instructors.find((course) => course.id === id)!.expertise,
+    description: instructor.expertise,
   };
 }
 
 export default async function InstructorPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string; locale: ILocale }>;
 }) {
   const t = await getTranslations("instructorPage");
-  const { id } = await params;
-  const instructor = await getInstructor(id);
+  const { id, locale } = await params;
 
-  if (!instructor) {
+  const payload = await getAppPayload();
+
+  const instructorData = await payload.find({
+    collection: "instructors",
+    where: {
+      id: {
+        equals: id,
+      },
+    },
+    locale,
+  });
+
+  if (!instructorData.docs.length) {
     notFound();
   }
 
-  const courses = await getCoursesByInstructor(id);
+  const instructor = instructorData.docs[0];
 
   return (
     <div className="container mx-auto py-8">
       <Card className="max-w-3xl mx-auto mb-8">
         <CardHeader className="flex flex-row items-center gap-4">
           <Avatar className="w-20 h-20">
-            <AvatarImage src={instructor.avatar} alt={instructor.name} />
+            <AvatarImage
+              src={
+                typeof instructor.avatar === "object"
+                  ? (instructor.avatar.url ?? "")
+                  : ""
+              }
+              alt={instructor.name}
+            />
             <AvatarFallback>
               {instructor.name
                 .split(" ")
@@ -81,7 +114,7 @@ export default async function InstructorPage({
                   key={index}
                   className="bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm"
                 >
-                  {skill}
+                  {skill.title}
                 </span>
               ))}
             </div>
@@ -93,9 +126,11 @@ export default async function InstructorPage({
         {t("otherCourses", { name: instructor.name })}
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {courses.map((course) => (
-          <CourseCard key={course.id} course={course} />
-        ))}
+        {instructor.courses?.map((course) =>
+          typeof course === "object" ? (
+            <CourseCard key={course.id} course={course} />
+          ) : null
+        )}
       </div>
     </div>
   );

@@ -8,59 +8,84 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { courses } from "@/mocks/courses";
 import { Link } from "@/i18n/routing";
-
-async function getCourse(id: string) {
-  const course = courses.find((c) => c.id === id);
-  if (!course) {
-    return null;
-  }
-  return course;
-}
+import { getAppPayload } from "@/utils/getAppPayload";
+import { ILocale } from "@/types";
 
 interface Args {
   params: Promise<{
     id: string;
+    locale: ILocale;
   }>;
 }
 
 export async function generateMetadata({ params }: Args) {
-  const { id } = await params;
+  const { id, locale } = await params;
+
+  const payload = await getAppPayload();
+
+  const courseData = await payload.find({
+    collection: "courses",
+    where: {
+      id: {
+        equals: id,
+      },
+    },
+    locale,
+  });
+
+  if (!courseData.docs.length) {
+    return null;
+  }
+
+  const course = courseData.docs[0];
 
   return {
-    title: courses.find((course) => course.id === id)!.title,
-    description: courses.find((course) => course.id === id)!.description,
+    title: course.title,
+    description: course.description,
   };
 }
 
 export default async function CoursePage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string; locale: ILocale }>;
 }) {
-  const { id } = await params;
-  const course = await getCourse(id);
+  const { id, locale } = await params;
   const t = await getTranslations("coursePage");
+  const payload = await getAppPayload();
+  const courseData = await payload.find({
+    collection: "courses",
+    where: {
+      id: {
+        equals: id,
+      },
+    },
+    locale,
+  });
 
-  if (!course) {
+  if (!courseData.docs.length) {
     notFound();
   }
+
+  const course = courseData.docs[0];
 
   return (
     <div className="container mx-auto py-8">
       <Card className="max-w-3xl mx-auto">
         <CardHeader>
           <CardTitle className="text-3xl">{course.title}</CardTitle>
-          <CardDescription>
-            {t("instructor")}:{" "}
-            <Link
-              href={`/instructors/${course.instructor.id}`}
-              className="hover:underline"
-            >
-              {course.instructor.name}
-            </Link>
-          </CardDescription>
+          {typeof course.instructor !== "number" && (
+            <CardDescription>
+              {t("instructor")}:{" "}
+              <Link
+                href={`/instructors/${course.instructor.id}`}
+                className="hover:underline"
+              >
+                {course.instructor.name}
+              </Link>
+            </CardDescription>
+          )}
         </CardHeader>
         <CardContent>
           <p className="mb-4">{course.description}</p>
@@ -77,8 +102,8 @@ export default async function CoursePage({
           <div className="mb-6">
             <h3 className="font-semibold mb-2">{t("topics")}</h3>
             <ul className="list-disc list-inside">
-              {course.topics.map((topic, index) => (
-                <li key={index}>{topic}</li>
+              {course.topics.map((topic) => (
+                <li key={topic.title}>{topic.title}</li>
               ))}
             </ul>
           </div>

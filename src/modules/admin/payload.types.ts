@@ -65,6 +65,10 @@ export interface Config {
     users: UserAuthOperations;
   };
   collections: {
+    courses: Course;
+    instructors: Instructor;
+    media: Media;
+    teamMembers: TeamMember;
     users: User;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -72,6 +76,10 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
+    courses: CoursesSelect<false> | CoursesSelect<true>;
+    instructors: InstructorsSelect<false> | InstructorsSelect<true>;
+    media: MediaSelect<false> | MediaSelect<true>;
+    teamMembers: TeamMembersSelect<false> | TeamMembersSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -111,6 +119,75 @@ export interface UserAuthOperations {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "courses".
+ */
+export interface Course {
+  id: number;
+  title: string;
+  description: string;
+  duration: string;
+  level: 'beginner' | 'intermediate' | 'upper-intermediate';
+  topics: {
+    title?: string | null;
+    id?: string | null;
+  }[];
+  instructor: number | Instructor;
+  titleWithId?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "instructors".
+ */
+export interface Instructor {
+  id: number;
+  name: string;
+  bio: string;
+  expertise: {
+    title?: string | null;
+    id?: string | null;
+  }[];
+  courses?: (number | Course)[] | null;
+  avatar: number | Media;
+  nameWithId?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: number;
+  alt: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "teamMembers".
+ */
+export interface TeamMember {
+  id: number;
+  name: string;
+  role: string;
+  avatar: number | Media;
+  bio: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
@@ -132,10 +209,27 @@ export interface User {
  */
 export interface PayloadLockedDocument {
   id: number;
-  document?: {
-    relationTo: 'users';
-    value: number | User;
-  } | null;
+  document?:
+    | ({
+        relationTo: 'courses';
+        value: number | Course;
+      } | null)
+    | ({
+        relationTo: 'instructors';
+        value: number | Instructor;
+      } | null)
+    | ({
+        relationTo: 'media';
+        value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'teamMembers';
+        value: number | TeamMember;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: number | User;
+      } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
@@ -177,6 +271,75 @@ export interface PayloadMigration {
   batch?: number | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "courses_select".
+ */
+export interface CoursesSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  duration?: T;
+  level?: T;
+  topics?:
+    | T
+    | {
+        title?: T;
+        id?: T;
+      };
+  instructor?: T;
+  titleWithId?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "instructors_select".
+ */
+export interface InstructorsSelect<T extends boolean = true> {
+  name?: T;
+  bio?: T;
+  expertise?:
+    | T
+    | {
+        title?: T;
+        id?: T;
+      };
+  courses?: T;
+  avatar?: T;
+  nameWithId?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media_select".
+ */
+export interface MediaSelect<T extends boolean = true> {
+  alt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "teamMembers_select".
+ */
+export interface TeamMembersSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  avatar?: T;
+  bio?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
