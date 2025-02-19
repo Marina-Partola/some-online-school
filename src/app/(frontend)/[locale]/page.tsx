@@ -6,10 +6,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { teamMembers } from "@/mocks/teamMembers";
 import { getTranslations } from "next-intl/server";
+import { getAppPayload } from "@/utils/getAppPayload";
+import { ILocale } from "@/types";
 
-export default async function About() {
+export default async function About({
+  params,
+}: {
+  params: Promise<{ locale: ILocale }>;
+}) {
+  const { locale } = await params;
   const benefits = [
     "Гибкий график обучения",
     "Опытные преподаватели из разных областей",
@@ -19,6 +25,11 @@ export default async function About() {
   ];
 
   const t = await getTranslations("aboutPage");
+  const payload = await getAppPayload();
+  const teamMembers = await payload.find({
+    collection: "teamMembers",
+    locale,
+  });
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -48,11 +59,16 @@ export default async function About() {
 
       <h2 className="text-3xl font-semibold mb-4">{t("team.title")}</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {teamMembers.map((member) => (
-          <Card key={member.name}>
+        {teamMembers.docs.map((member) => (
+          <Card key={member.id}>
             <CardHeader>
               <Avatar className="w-24 h-24 mx-auto">
-                <AvatarImage src={member.avatar} alt={member.name} />
+                {typeof member.avatar !== "number" && (
+                  <AvatarImage
+                    src={member.avatar.url ?? ""}
+                    alt={member.name}
+                  />
+                )}
                 <AvatarFallback>
                   {member.name
                     .split(" ")
