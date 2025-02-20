@@ -58,14 +58,6 @@
     "topics": "Темы",
     "enrollButton": "Оставить заявку"
   },
-  "common": {
-    "header": {
-      "menu": {
-        "aboutUs": "О нас",
-        "listCourses": "Список курсов"
-      }
-    }
-  },
   "notFoundPage": {
     "title": "Такой страницы нет"
   }
