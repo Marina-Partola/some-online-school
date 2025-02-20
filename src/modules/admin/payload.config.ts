@@ -7,10 +7,13 @@ import { Instructors } from "./collections/instructors";
 import { Media } from "./collections/media";
 import { TeamMembers } from "./collections/teamMembers";
 import { seed } from "./seed";
+import { Navigation } from "./globals/navigation";
+import { Pages } from "./collections/pages";
 
 export default buildConfig({
   editor: lexicalEditor(),
-  collections: [Courses, Instructors, Media, TeamMembers],
+  collections: [Courses, Instructors, Media, TeamMembers, Pages],
+  globals: [Navigation],
   secret: process.env.PAYLOAD_SECRET || "",
   db: sqliteAdapter({
     client: {

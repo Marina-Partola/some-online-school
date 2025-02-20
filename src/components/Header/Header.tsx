@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/routing";
-import { getTranslations } from "next-intl/server";
+import { getLocale } from "next-intl/server";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -9,19 +9,14 @@ import {
 import React from "react";
 import { GraduationCap } from "lucide-react";
 import { SwitchLang } from "../SwitchLang";
+import { getAppPayload } from "@/utils/getAppPayload";
+import { ILocale } from "@/types";
 
 export const Header: React.FC = async () => {
-  const t = await getTranslations("common.header.menu");
-  const items = [
-    {
-      label: t("aboutUs"),
-      url: "/",
-    },
-    {
-      label: t("listCourses"),
-      url: "/courses",
-    },
-  ];
+  const locale = (await getLocale()) as ILocale;
+  const payload = await getAppPayload();
+  const items =
+    (await payload.findGlobal({ slug: "navigation", locale })).links ?? [];
 
   return (
     <header className="px-8 pt-6">
@@ -30,13 +25,24 @@ export const Header: React.FC = async () => {
 
         <NavigationMenu>
           <NavigationMenuList>
-            {items.map((item) => (
-              <NavigationMenuItem key={item.url} className="cursor-pointer">
-                <Link href={item.url} className={navigationMenuTriggerStyle()}>
-                  {item.label}
-                </Link>
-              </NavigationMenuItem>
-            ))}
+            {items.map((item) => {
+              const url =
+                typeof item.reference?.value === "object"
+                  ? item.reference?.value.slug
+                  : null;
+
+              return (
+                <React.Fragment key={item.id}>
+                  {url && (
+                    <NavigationMenuItem className="cursor-pointer">
+                      <Link href={url} className={navigationMenuTriggerStyle()}>
+                        {item.label}
+                      </Link>
+                    </NavigationMenuItem>
+                  )}
+                </React.Fragment>
+              );
+            })}
           </NavigationMenuList>
         </NavigationMenu>
 

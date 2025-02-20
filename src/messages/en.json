@@ -55,14 +55,6 @@
     "topics": "Topics",
     "enrollButton": "Enroll"
   },
-  "common": {
-    "header": {
-      "menu": {
-        "aboutUs": "About us",
-        "listCourses": "Courses"
-      }
-    }
-  },
   "notFoundPage": {
     "title": "Not found"
   }
