@@ -12,7 +12,7 @@ export default async function Page({
     locale: ILocale;
   }>;
 }) {
-  const { slug, locale } = await params;
+  const { slug = "", locale } = await params;
   const payload = await getAppPayload();
 
   const pages = await payload.find({
@@ -26,7 +26,7 @@ export default async function Page({
     notFound();
   }
 
-  const { layout } = pages.docs[0];
+  const { layout, title } = pages.docs[0];
 
-  return <RenderBlocks blocks={layout} />;
+  return <RenderBlocks blocks={layout} title={title} />;
 }

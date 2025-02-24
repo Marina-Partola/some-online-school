@@ -189,6 +189,7 @@ export interface TeamMember {
   role: string;
   avatar: number | Media;
   bio: string;
+  nameWithId?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -199,20 +200,67 @@ export interface TeamMember {
 export interface Page {
   id: number;
   slug: string;
-  layout?: QuoteBlock[] | null;
+  title: string;
+  layout?:
+    | (
+        | {
+            title: string;
+            layout: (
+              | {
+                  text: string;
+                  id?: string | null;
+                  blockName?: string | null;
+                  blockType: 'TextBlock';
+                }
+              | {
+                  items: {
+                    text?: string | null;
+                    id?: string | null;
+                  }[];
+                  id?: string | null;
+                  blockName?: string | null;
+                  blockType: 'ListBlock';
+                }
+            )[];
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'Card';
+          }
+        | {
+            reference?:
+              | {
+                  relationTo: 'teamMembers';
+                  value: number | TeamMember;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'PersonCardBlock';
+          }
+        | {
+            title?: string | null;
+            layout?:
+              | {
+                  reference?:
+                    | {
+                        relationTo: 'teamMembers';
+                        value: number | TeamMember;
+                      }[]
+                    | null;
+                  id?: string | null;
+                  blockName?: string | null;
+                  blockType: 'PersonCardBlock';
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'GalleryBlock';
+          }
+      )[]
+    | null;
+  titleWithId?: string | null;
   updatedAt: string;
   createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "QuoteBlock".
- */
-export interface QuoteBlock {
-  quoteHeader: string;
-  quoteText?: string | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'Quote';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -370,6 +418,7 @@ export interface TeamMembersSelect<T extends boolean = true> {
   role?: T;
   avatar?: T;
   bio?: T;
+  nameWithId?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -379,23 +428,69 @@ export interface TeamMembersSelect<T extends boolean = true> {
  */
 export interface PagesSelect<T extends boolean = true> {
   slug?: T;
+  title?: T;
   layout?:
     | T
     | {
-        Quote?: T | QuoteBlockSelect<T>;
+        Card?:
+          | T
+          | {
+              title?: T;
+              layout?:
+                | T
+                | {
+                    TextBlock?:
+                      | T
+                      | {
+                          text?: T;
+                          id?: T;
+                          blockName?: T;
+                        };
+                    ListBlock?:
+                      | T
+                      | {
+                          items?:
+                            | T
+                            | {
+                                text?: T;
+                                id?: T;
+                              };
+                          id?: T;
+                          blockName?: T;
+                        };
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        PersonCardBlock?:
+          | T
+          | {
+              reference?: T;
+              id?: T;
+              blockName?: T;
+            };
+        GalleryBlock?:
+          | T
+          | {
+              title?: T;
+              layout?:
+                | T
+                | {
+                    PersonCardBlock?:
+                      | T
+                      | {
+                          reference?: T;
+                          id?: T;
+                          blockName?: T;
+                        };
+                  };
+              id?: T;
+              blockName?: T;
+            };
       };
+  titleWithId?: T;
   updatedAt?: T;
   createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "QuoteBlock_select".
- */
-export interface QuoteBlockSelect<T extends boolean = true> {
-  quoteHeader?: T;
-  quoteText?: T;
-  id?: T;
-  blockName?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
