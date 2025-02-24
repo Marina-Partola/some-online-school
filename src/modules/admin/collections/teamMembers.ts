@@ -1,4 +1,5 @@
-import type { CollectionConfig } from "payload";
+import type { CollectionConfig, FieldHookArgs } from "payload";
+import { TeamMember } from "../payload.types";
 
 export const TeamMembers: CollectionConfig = {
   slug: "teamMembers",
@@ -28,5 +29,26 @@ export const TeamMembers: CollectionConfig = {
       localized: true,
       required: true,
     },
+    {
+      name: "nameWithId",
+      type: "text",
+      hooks: {
+        afterRead: [
+          ({ data }: FieldHookArgs<TeamMember>) => {
+            if (!data) {
+              return "";
+            }
+
+            return `${data.id} ${data.name}`;
+          },
+        ],
+      },
+      admin: {
+        hidden: true,
+      },
+    },
   ],
+  admin: {
+    useAsTitle: "nameWithId",
+  },
 };

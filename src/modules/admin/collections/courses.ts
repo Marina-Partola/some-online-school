@@ -101,8 +101,6 @@ export const Courses: CollectionConfig = {
           return;
         }
 
-        console.log("Instructor found:", instructor);
-
         // Проверяем, есть ли уже курс у инструктора
         const existingCourses = Array.isArray(instructor.courses)
           ? instructor.courses.map((course) =>
@@ -118,7 +116,6 @@ export const Courses: CollectionConfig = {
               courses: [...existingCourses, doc.id],
             },
           });
-          console.log(`Course ${doc.id} added to instructor ${instructorId}`);
         }
       },
     ],
