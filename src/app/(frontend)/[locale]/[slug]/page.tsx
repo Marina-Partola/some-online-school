@@ -3,6 +3,7 @@ import { ILocale } from "@/types";
 import { getAppPayload } from "@/utils/getAppPayload";
 import { notFound } from "next/navigation";
 import React from "react";
+import { RichText } from "@payloadcms/richtext-lexical/react";
 
 export default async function Page({
   params,
@@ -26,7 +27,13 @@ export default async function Page({
     notFound();
   }
 
-  const { layout, title } = pages.docs[0];
+  const { layout, content, title } = pages.docs[0].mainContent;
+  console.log(pages);
 
-  return <RenderBlocks blocks={layout} title={title} />;
+  return (
+    <>
+      <RenderBlocks blocks={layout} title={title} />
+      {content && <RichText data={content} />}
+    </>
+  );
 }

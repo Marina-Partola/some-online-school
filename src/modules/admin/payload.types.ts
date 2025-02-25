@@ -200,64 +200,85 @@ export interface TeamMember {
 export interface Page {
   id: number;
   slug: string;
-  title: string;
-  layout?:
-    | (
-        | {
-            title: string;
-            layout: (
-              | {
-                  text: string;
-                  id?: string | null;
-                  blockName?: string | null;
-                  blockType: 'TextBlock';
-                }
-              | {
-                  items: {
-                    text?: string | null;
+  mainContent: {
+    title: string;
+    layout?:
+      | (
+          | {
+              title: string;
+              layout: (
+                | {
+                    text: string;
                     id?: string | null;
-                  }[];
-                  id?: string | null;
-                  blockName?: string | null;
-                  blockType: 'ListBlock';
-                }
-            )[];
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'Card';
-          }
-        | {
-            reference?:
-              | {
-                  relationTo: 'teamMembers';
-                  value: number | TeamMember;
-                }[]
-              | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'PersonCardBlock';
-          }
-        | {
-            title?: string | null;
-            layout?:
-              | {
-                  reference?:
-                    | {
-                        relationTo: 'teamMembers';
-                        value: number | TeamMember;
-                      }[]
-                    | null;
-                  id?: string | null;
-                  blockName?: string | null;
-                  blockType: 'PersonCardBlock';
-                }[]
-              | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'GalleryBlock';
-          }
-      )[]
-    | null;
+                    blockName?: string | null;
+                    blockType: 'TextBlock';
+                  }
+                | {
+                    items: {
+                      text?: string | null;
+                      id?: string | null;
+                    }[];
+                    id?: string | null;
+                    blockName?: string | null;
+                    blockType: 'ListBlock';
+                  }
+              )[];
+              id?: string | null;
+              blockName?: string | null;
+              blockType: 'Card';
+            }
+          | {
+              reference?:
+                | {
+                    relationTo: 'teamMembers';
+                    value: number | TeamMember;
+                  }[]
+                | null;
+              id?: string | null;
+              blockName?: string | null;
+              blockType: 'PersonCardBlock';
+            }
+          | {
+              title?: string | null;
+              layout?:
+                | {
+                    reference?:
+                      | {
+                          relationTo: 'teamMembers';
+                          value: number | TeamMember;
+                        }[]
+                      | null;
+                    id?: string | null;
+                    blockName?: string | null;
+                    blockType: 'PersonCardBlock';
+                  }[]
+                | null;
+              id?: string | null;
+              blockName?: string | null;
+              blockType: 'GalleryBlock';
+            }
+        )[]
+      | null;
+    content?: {
+      root: {
+        type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+  };
+  seo: {
+    title: string;
+    description: string;
+  };
   titleWithId?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -428,65 +449,76 @@ export interface TeamMembersSelect<T extends boolean = true> {
  */
 export interface PagesSelect<T extends boolean = true> {
   slug?: T;
-  title?: T;
-  layout?:
+  mainContent?:
     | T
     | {
-        Card?:
+        title?: T;
+        layout?:
           | T
           | {
-              title?: T;
-              layout?:
+              Card?:
                 | T
                 | {
-                    TextBlock?:
+                    title?: T;
+                    layout?:
                       | T
                       | {
-                          text?: T;
-                          id?: T;
-                          blockName?: T;
-                        };
-                    ListBlock?:
-                      | T
-                      | {
-                          items?:
+                          TextBlock?:
                             | T
                             | {
                                 text?: T;
                                 id?: T;
+                                blockName?: T;
                               };
-                          id?: T;
-                          blockName?: T;
+                          ListBlock?:
+                            | T
+                            | {
+                                items?:
+                                  | T
+                                  | {
+                                      text?: T;
+                                      id?: T;
+                                    };
+                                id?: T;
+                                blockName?: T;
+                              };
                         };
+                    id?: T;
+                    blockName?: T;
                   };
-              id?: T;
-              blockName?: T;
-            };
-        PersonCardBlock?:
-          | T
-          | {
-              reference?: T;
-              id?: T;
-              blockName?: T;
-            };
-        GalleryBlock?:
-          | T
-          | {
-              title?: T;
-              layout?:
+              PersonCardBlock?:
                 | T
                 | {
-                    PersonCardBlock?:
+                    reference?: T;
+                    id?: T;
+                    blockName?: T;
+                  };
+              GalleryBlock?:
+                | T
+                | {
+                    title?: T;
+                    layout?:
                       | T
                       | {
-                          reference?: T;
-                          id?: T;
-                          blockName?: T;
+                          PersonCardBlock?:
+                            | T
+                            | {
+                                reference?: T;
+                                id?: T;
+                                blockName?: T;
+                              };
                         };
+                    id?: T;
+                    blockName?: T;
                   };
-              id?: T;
-              blockName?: T;
             };
+        content?: T;
+      };
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
       };
   titleWithId?: T;
   updatedAt?: T;
