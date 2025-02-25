@@ -81,7 +81,7 @@ export const Courses: CollectionConfig = {
         if (!doc.instructor) return;
 
         const instructorId =
-          typeof doc.instructor === "string"
+          typeof doc.instructor === "number"
             ? doc.instructor
             : doc.instructor?.id;
 

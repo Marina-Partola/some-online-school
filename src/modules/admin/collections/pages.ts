@@ -3,6 +3,10 @@ import { Page } from "../payload.types";
 import { CardBlockConfig } from "@/blocks/CardBlock/config";
 import { PersonCardBlockConfig } from "@/blocks/PersonCardBlock/config";
 import { GalleryBlockConfig } from "@/blocks/GalleryBlock/config";
+import {
+  FixedToolbarFeature,
+  lexicalEditor,
+} from "@payloadcms/richtext-lexical";
 
 export const Pages: CollectionConfig = {
   slug: "pages",
@@ -11,6 +15,7 @@ export const Pages: CollectionConfig = {
       `http://localhost:3000/${locale}/${slug}`,
     useAsTitle: "titleWithId",
   },
+  versions: {},
   fields: [
     {
       name: "slug",
@@ -21,15 +26,58 @@ export const Pages: CollectionConfig = {
         value?.startsWith("/") ? true : "URL должен начинаться с '/'",
     },
     {
-      name: "title",
-      type: "text",
-      required: true,
-      localized: true,
-    },
-    {
-      name: "layout",
-      type: "blocks",
-      blocks: [CardBlockConfig, PersonCardBlockConfig, GalleryBlockConfig],
+      type: "tabs",
+      tabs: [
+        {
+          fields: [
+            {
+              name: "title",
+              type: "text",
+              required: true,
+              localized: true,
+            },
+            {
+              name: "layout",
+              type: "blocks",
+              blocks: [
+                CardBlockConfig,
+                PersonCardBlockConfig,
+                GalleryBlockConfig,
+              ],
+            },
+            {
+              name: "content",
+              type: "richText",
+              editor: lexicalEditor({
+                features: ({ defaultFeatures }) => [
+                  ...defaultFeatures,
+                  FixedToolbarFeature(),
+                ],
+              }),
+            },
+          ],
+          name: "mainContent",
+          label: "Main Content",
+        },
+        {
+          fields: [
+            {
+              name: "title",
+              required: true,
+              type: "text",
+              localized: true,
+            },
+            {
+              name: "description",
+              required: true,
+              type: "text",
+              localized: true,
+            },
+          ],
+          name: "seo",
+          label: "SEO",
+        },
+      ],
     },
     {
       name: "titleWithId",
@@ -41,7 +89,7 @@ export const Pages: CollectionConfig = {
               return "";
             }
 
-            return `${data.id} ${data.title}`;
+            return `${data.id} ${data.mainContent?.title}`;
           },
         ],
       },
