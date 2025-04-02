@@ -81,9 +81,9 @@ export const Courses: CollectionConfig = {
         if (!doc.instructor) return;
 
         const instructorId =
-          typeof doc.instructor === "string"
-            ? doc.instructor
-            : doc.instructor?.id;
+          typeof doc.instructor === "object"
+            ? doc.instructor?.id
+            : doc.instructor;
 
         if (!instructorId) {
           console.error("Instructor ID is missing or invalid:", doc.instructor);
